@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Based on AWS DeepLearning AMI with Ubuntu 18.04
-sudo bash
 
 # Set the CUDA Version as 10.1
 # TensorFlow Profiler and CUPTI Doesn't Work on CUDA 10.2
