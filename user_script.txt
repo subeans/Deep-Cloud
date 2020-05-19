@@ -1,0 +1,9 @@
+#cloud-boothook
+#!/bin/bash
+
+git clone https://github.com/odobenuskr/Deep-Cloud.git
+cd Deep-Cloud
+
+bash ./settings.sh
+bash ./run.sh
+bash ./profile_log.sh
