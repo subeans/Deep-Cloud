@@ -14,7 +14,3 @@ pip3 install tf-nightly
 pip3 install tb-nightly 
 pip3 install tensorboard_plugin_profile
 pip3 install tensorflow_datasets
-
-mkdir img_clf
-cd img_clf
-
