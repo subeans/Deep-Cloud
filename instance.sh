@@ -11,8 +11,8 @@ echo $INSTANCE_PUB_DNS
 
 sleep 30
 echo 'clone start'
-ssh -o "StrictHostKeyChecking no" -i awspwd.pem uvuntu@$INSTANCE_PUB_DNS 'git clone https://github.com/odobenuskr/Deep-Cloud.git;cd Deep-Cloud'
+ssh -o "StrictHostKeyChecking no" -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS 'git clone https://github.com/odobenuskr/Deep-Cloud.git;cd Deep-Cloud'
 echo 'setting start'
-ssh -i awspwd.pem uvuntu@$INSTANCE_PUB_DNS 'bash ./settings.sh'
+ssh -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS 'bash ./settings.sh'
 echo 'run start'
-ssh -i awspwd.pem uvuntu@$INSTANCE_PUB_DNS 'bash ./run.sh'
+ssh -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS 'bash ./run.sh'
