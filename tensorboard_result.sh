@@ -2,6 +2,7 @@
 tensorboard --logdir=./logs &
 sleep 5
 
+mkdir tensorstats
 INSTANCE_TYPE=$1
 NAME_LIST=$(find ./logs -name *.trace.json.gz)
 
