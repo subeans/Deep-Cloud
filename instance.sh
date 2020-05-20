@@ -22,8 +22,16 @@ BASE_COMMAND="cd Deep-Cloud;sudo bash ./run.sh "
 RUN_COMMAND="$BASE_COMMAND$INSTANCE_TYPE"
 ssh -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS $RUN_COMMAND
 
-# Run Tensorboard backgroound
+# Run Experiments
 sleep 10
+echo 'run start'
+BASE_COMMAND="cd Deep-Cloud;sudo bash ./run.sh "
+RUN_COMMAND="$BASE_COMMAND$INSTANCE_TYPE"
+ssh -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS $RUN_COMMAND
+
+# Get Tensorboard Results
+sleep 10
+ssh -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS "cd Deep-Cloud;sudo bash ./tensorboard_result.sh"
 
 # Terminate Instance
 TERMINATE_INFO=$(aws ec2 terminate-instances --instance-ids $INSTANCE_ID)
