@@ -72,8 +72,8 @@ model.add(tf.keras.layers.Dense(num_classes, activation='softmax'))
 model.compile(loss=tf.keras.losses.categorical_crossentropy,
               optimizer=tf.keras.optimizers.Adadelta(),
               metrics=['accuracy'])
-
-logs = "logs-" + str(args.batch_size) + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+# + str(args.batch_size) + "/"
+logs = "logs" + datetime.now().strftime("%Y%m%d-%H%M%S")
 prof_range = str(args.prof_start_batch) + ',' + str(args.prof_end_batch)
 tboard_callback = tf.keras.callbacks.TensorBoard(log_dir = logs,
                                                  histogram_freq = 1,
@@ -85,4 +85,3 @@ model.fit(x_train, y_train,
           verbose=1,
           validation_data=(x_test, y_test),
           callbacks = [tboard_callback])
-
