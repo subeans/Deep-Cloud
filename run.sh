@@ -2,19 +2,22 @@
 # # time_list 의 naming 은 profile2.py python 내부에서 처리하도록 함
 # # 
 
-# Batch 16
-python3.6 profile.py --batch_size 16 --prof_start_batch 1 --prof_end_batch 2
-sleep 5
-python3.6 profile.py --batch_size 16 --prof_start_batch 5001 --prof_end_batch 5002
-sleep 5
-python3.6 profile.py --batch_size 16 --prof_start_batch 10001 --prof_end_batch 10002
-sleep 5
-python3.6 profile.py --batch_size 16 --prof_start_batch 50001 --prof_end_batch 50002
-sleep 5
-python3.6 profile.py --batch_size 16 --prof_start_batch 100001 --prof_end_batch 100002
-sleep 5
-python3.6 profile.py --batch_size 16 --prof_start_batch 200001 --prof_end_batch 200002
-sleep 5
+INSTANCE_TYPE=$1
+echo $INSTANCE_TYPE
+
+# # Batch 16
+# python3.6 profile.py --batch_size 16 --prof_start_batch 1 --prof_end_batch 2
+# sleep 5
+# python3.6 profile.py --batch_size 16 --prof_start_batch 5001 --prof_end_batch 5002
+# sleep 5
+# python3.6 profile.py --batch_size 16 --prof_start_batch 10001 --prof_end_batch 10002
+# sleep 5
+# python3.6 profile.py --batch_size 16 --prof_start_batch 50001 --prof_end_batch 50002
+# sleep 5
+# python3.6 profile.py --batch_size 16 --prof_start_batch 100001 --prof_end_batch 100002
+# sleep 5
+# python3.6 profile.py --batch_size 16 --prof_start_batch 200001 --prof_end_batch 200002
+# sleep 5
 
 # python3.6 profile2.py --batch_size 16 --prof_start_batch 200001 --prof_end_batch 200002
 # sleep 5
