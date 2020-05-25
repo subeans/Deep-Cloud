@@ -3,7 +3,7 @@ tensorboard --logdir=./logs &
 sleep 5
 
 mkdir tensorstats
-INSTANCE_TYPE=$1
+# INSTANCE_TYPE=$1
 NAME_LIST=$(find ./logs -name *.trace.json.gz)
 
 TB_URL1="http://localhost:6006/data/plugin/profile/data?run="
