@@ -1,5 +1,5 @@
 # Get Instance Type
-INSTANCE_TYPE=$1
+# INSTANCE_TYPE=$1
 
 # Get profile result at half of 2epoch
 for BATCH_SIZE in 64 # 16 32 64 128 256 512
