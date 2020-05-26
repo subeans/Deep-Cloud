@@ -73,8 +73,7 @@ model.compile(loss=tf.keras.losses.categorical_crossentropy,
               optimizer=tf.keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
-# + str(args.batch_size) + "/"
-logs = "/home/ubuntu/Deep-Cloud/logs/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+logs = "/home/ubuntu/Deep-Cloud/logs/"  + str(args.batch_size) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 prof_range = str(args.prof_start_batch) + ',' + str(args.prof_end_batch)
 tboard_callback = tf.keras.callbacks.TensorBoard(log_dir = logs,
                                                  histogram_freq = 1,
