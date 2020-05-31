@@ -79,7 +79,7 @@ class BatchTimeCallback(tf.keras.callbacks.Callback):
         self.all_times = []
 
     def on_train_end(self, logs=None):
-	time_filename = "./tensorstats/times-" + str(args.batch_size) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".pickle"
+        time_filename = "./tensorstats/times-" + str(args.batch_size) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".pickle"
         time_file = open(time_filename, 'ab')
         pickle.dump(self.all_times, time_file)
         time_file.close()
