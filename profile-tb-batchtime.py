@@ -96,6 +96,7 @@ class BatchTimeCallback(tf.keras.callbacks.Callback):
     def on_train_batch_end(self, batch, logs=None):
         self.epoch_times.append(time.time() - self.batch_time_start)
 
+batch_time_callback = BatchTimeCallback()
 
 logs = "/home/ubuntu/Deep-Cloud/logs/"  + str(args.batch_size) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 prof_range = str(args.prof_start_batch) + ',' + str(args.prof_end_batch)
