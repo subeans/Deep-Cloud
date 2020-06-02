@@ -3,6 +3,9 @@
 
 # Get profile result at half of 2epoch
 sudo -i -u root bash << EOF
+python3.6 /home/ubuntu/Deep-Cloud/test-profile.py --batch_size 16 --prof_start_batch 5625 --prof_end_batch 5626
+sleep 3
+
 python3.6 /home/ubuntu/Deep-Cloud/profile-slim-lenet.py --batch_size 16 --prof_start_batch 5625 --prof_end_batch 5626
 sleep 3
 
