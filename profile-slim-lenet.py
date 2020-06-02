@@ -6,6 +6,7 @@ from datetime import datetime
 from packaging import version
 import math
 import time
+import pickle
 
 import os
 import tensorflow as tf
@@ -72,6 +73,30 @@ model.compile(loss=tf.keras.losses.categorical_crossentropy,
               optimizer=tf.keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
+class BatchTimeCallback(tf.keras.callbacks.Callback):
+    def on_train_begin(self, logs=None):
+        self.all_times = []
+
+    def on_train_end(self, logs=None):
+        time_filename = "/home/ubuntu/Deep-Cloud/tensorstats/times-" + str(args.batch_size) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".pickle"
+        time_file = open(time_filename, 'ab')
+        pickle.dump(self.all_times, time_file)
+        time_file.close()
+
+    def on_epoch_begin(self, epoch, logs=None):
+        self.epoch_times = []
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.all_times.append(self.epoch_times)
+
+    def on_train_batch_begin(self, batch, logs=None):
+        self.batch_time_start = time.time()
+
+    def on_train_batch_end(self, batch, logs=None):
+        self.epoch_times.append(time.time() - self.batch_time_start)
+
+batch_time_callback = BatchTimeCallback()
+
 logs = "/home/ubuntu/Deep-Cloud/logs/"  + str(args.batch_size) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 prof_range = str(args.prof_start_batch) + ',' + str(args.prof_end_batch)
 tboard_callback = tf.keras.callbacks.TensorBoard(log_dir = logs,
@@ -83,4 +108,4 @@ model.fit(x_train, y_train,
           epochs=epochs,
           verbose=1,
           validation_data=(x_test, y_test),
-          callbacks = [tboard_callback])
+          callbacks = [tboard_callback, batch_time_callback])
