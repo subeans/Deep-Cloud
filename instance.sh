@@ -5,13 +5,13 @@ LAUNCH_INFO=$(aws ec2 run-instances --image-id ami-abcd1234 --count 1 --instance
 --key-name my-key-pair --subnet-id subnet-abcd1234 --security-group-ids sg-abcd1234)
 
 # Instance ID and Public DNS Parsing
-sleep 20
+sleep 60
 INSTANCE_ID=$(echo $LAUNCH_INFO | jq -r '. | .Instances[0].InstanceId')
 INSTANCE_PUB_DNS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID | jq -r '. | .Reservations[0].Instances[0].PublicDnsName')
 echo $INSTANCE_PUB_DNS
 
 # Setting for Deep Learning
-sleep 10
+sleep 60
 echo 'clone start'
 ssh -o "StrictHostKeyChecking no" -i awspwd.pem ubuntu@$INSTANCE_PUB_DNS 'git clone https://github.com/odobenuskr/Deep-Cloud.git'
 echo 'setting start'
@@ -32,8 +32,9 @@ ssh -i awspwd.pem -t ubuntu@$INSTANCE_PUB_DNS $RUN_COMMAND2
 
 # Get csv files from instance
 sleep 10
+mkdir $INSTANCE_TYPE
 scp -i awspwd.pem \
-ubuntu@$INSTANCE_PUB_DNS:~/Deep-Cloud/tensorstats/* ./
+ubuntu@$INSTANCE_PUB_DNS:~/Deep-Cloud/tensorstats/* ./$INSTANCE_TYPE/
  
 # Terminate Instance
 sleep 10
