@@ -49,7 +49,7 @@ max_features = 20000
 # cut texts after this number of words (among top max_features most common words)
 maxlen = 80
 batch_size = args.batch_size
-epochs = 30
+epochs = 10
 
 print('Loading data...')
 (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
