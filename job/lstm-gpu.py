@@ -1,7 +1,3 @@
-
-
-time_start = time.perf_counter()
-
 '''
 #Trains an LSTM model on the IMDB sentiment classification task.
 
@@ -35,6 +31,8 @@ from tf.keras.datasets import imdb
 import time
 import os
 import argparse
+
+time_start = time.perf_counter()
 
 device_name = tf.test.gpu_device_name()
 if not device_name:
