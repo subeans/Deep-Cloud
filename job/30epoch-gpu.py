@@ -12,6 +12,8 @@ import tensorflow as tf
 
 import argparse
 
+time_start = time.perf_counter()
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch_size', default=128, type=int)
 parser.add_argument('--prof_start_batch', default=500, type=int)
@@ -74,3 +76,7 @@ model.fit(x_train, y_train,
           epochs=epochs,
           verbose=1,
           validation_data=(x_test, y_test))
+
+time_end = time.perf_counter()
+time_taken = time_end-time_start
+print("runtime: %.4f sec" % (time_taken))
