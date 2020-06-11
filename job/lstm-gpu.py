@@ -1,27 +1,45 @@
-'''
-#Example script to generate text from Nietzsche's writings.
-At least 20 epochs are required before the generated text
-starts sounding coherent.
-It is recommended to run this script on GPU, as recurrent
-networks are quite computationally intensive.
-If you try this script on new data, make sure your corpus
-has at least ~100k characters. ~1M is better.
-'''
 
+
+time_start = time.perf_counter()
+
+'''
+#Trains an LSTM model on the IMDB sentiment classification task.
+
+The dataset is actually too small for LSTM to be of any advantage
+compared to simpler, much faster methods such as TF-IDF + LogReg.
+
+**Notes**
+
+- RNNs are tricky. Choice of batch size is important,
+choice of loss and optimizer is critical, etc.
+Some configurations won't converge.
+
+- LSTM loss decrease patterns during training can be quite different
+from what you see with CNNs/MLPs/etc.
+
+'''
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
+from datetime import datetime
+from packaging import version
 
-import numpy as np
-import random
-import sys
-import io
+from tf.keras.preprocessing import sequence
+from tf.keras.models import Sequential
+from tf.keras.layers import Dense, Embedding
+from tf.keras.layers import LSTM
+from tf.keras.datasets import imdb
+
 import time
+import os
 import argparse
 
-time_start = time.perf_counter()
+device_name = tf.test.gpu_device_name()
+if not device_name:
+	raise SystemError('GPU Device Not Found')
+print('Found GPU at :{}'.format(device_name))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch_size', default=128, type=int)
@@ -29,101 +47,43 @@ parser.add_argument('--prof_start_batch', default=500, type=int)
 parser.add_argument('--prof_end_batch', default=520, type=int)
 args = parser.parse_args()
 
-device_name = tf.test.gpu_device_name()
-if not device_name:
-	raise SystemError('GPU Device Not Found')
-print('Found GPU at :{}'.format(device_name))
-
+max_features = 20000
+# cut texts after this number of words (among top max_features most common words)
+maxlen = 80
 batch_size = args.batch_size
 epochs = 30
 
-path = tf.keras.utils.data_utils.get_file(
-    'nietzsche.txt',
-    origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
-with io.open(path, encoding='utf-8') as f:
-    text = f.read().lower()
-print('corpus length:', len(text))
+print('Loading data...')
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
+print(len(x_train), 'train sequences')
+print(len(x_test), 'test sequences')
 
-chars = sorted(list(set(text)))
-print('total chars:', len(chars))
-char_indices = dict((c, i) for i, c in enumerate(chars))
-indices_char = dict((i, c) for i, c in enumerate(chars))
+print('Pad sequences (samples x time)')
+x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
 
-# cut the text in semi-redundant sequences of maxlen characters
-maxlen = 40
-step = 3
-sentences = []
-next_chars = []
-for i in range(0, len(text) - maxlen, step):
-    sentences.append(text[i: i + maxlen])
-    next_chars.append(text[i + maxlen])
-print('nb sequences:', len(sentences))
-
-print('Vectorization...')
-x = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
-y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
-for i, sentence in enumerate(sentences):
-    for t, char in enumerate(sentence):
-        x[i, t, char_indices[char]] = 1
-    y[i, char_indices[next_chars[i]]] = 1
-
-
-# build the model: a single LSTM
 print('Build model...')
-model = tf.keras.models.Sequential()
-model.add(tf.keras.layers.LSTM(128, input_shape=(maxlen, len(chars))))
-model.add(tf.keras.layers.Dense(len(chars), activation='softmax'))
+model = Sequential()
+model.add(Embedding(max_features, 128))
+model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+model.add(Dense(1, activation='sigmoid'))
 
-optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.01)
-model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+# try using different optimizers and different optimizer configs
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
 
-
-def sample(preds, temperature=1.0):
-    # helper function to sample an index from a probability array
-    preds = np.asarray(preds).astype('float64')
-    preds = np.log(preds) / temperature
-    exp_preds = np.exp(preds)
-    preds = exp_preds / np.sum(exp_preds)
-    probas = np.random.multinomial(1, preds, 1)
-    return np.argmax(probas)
-
-
-def on_epoch_end(epoch, _):
-    # Function invoked at end of each epoch. Prints generated text.
-    print()
-    print('----- Generating text after Epoch: %d' % epoch)
-
-    start_index = random.randint(0, len(text) - maxlen - 1)
-    for diversity in [0.2, 0.5, 1.0, 1.2]:
-        print('----- diversity:', diversity)
-
-        generated = ''
-        sentence = text[start_index: start_index + maxlen]
-        generated += sentence
-        print('----- Generating with seed: "' + sentence + '"')
-        sys.stdout.write(generated)
-
-        for i in range(400):
-            x_pred = np.zeros((1, maxlen, len(chars)))
-            for t, char in enumerate(sentence):
-                x_pred[0, t, char_indices[char]] = 1.
-
-            preds = model.predict(x_pred, verbose=0)[0]
-            next_index = sample(preds, diversity)
-            next_char = indices_char[next_index]
-
-            sentence = sentence[1:] + next_char
-
-            sys.stdout.write(next_char)
-            sys.stdout.flush()
-        print()
-
-print_callback = tf.keras.callbacks.LambdaCallback(on_epoch_end=on_epoch_end)
-
-model.fit(x, y,
+print('Train...')
+model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
-          callbacks=[print_callback])
+          validation_data=(x_test, y_test))
+score, acc = model.evaluate(x_test, y_test,
+                            batch_size=batch_size)
+print('Test score:', score)
+print('Test accuracy:', acc)
 
 time_end = time.perf_counter()
 time_taken = time_end-time_start
