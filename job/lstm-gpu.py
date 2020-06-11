@@ -8,13 +8,11 @@ If you try this script on new data, make sure your corpus
 has at least ~100k characters. ~1M is better.
 '''
 
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
-from keras.callbacks import LambdaCallback
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
-from keras.optimizers import RMSprop
-from keras.utils.data_utils import get_file
+
+import tensorflow as tf
 
 import numpy as np
 import random
@@ -39,7 +37,7 @@ print('Found GPU at :{}'.format(device_name))
 batch_size = args.batch_size
 epochs = 30
 
-path = get_file(
+path = tf.keras.utils.data_utils.get_file(
     'nietzsche.txt',
     origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 with io.open(path, encoding='utf-8') as f:
@@ -72,11 +70,11 @@ for i, sentence in enumerate(sentences):
 
 # build the model: a single LSTM
 print('Build model...')
-model = Sequential()
-model.add(LSTM(128, input_shape=(maxlen, len(chars))))
-model.add(Dense(len(chars), activation='softmax'))
+model = tf.keras.models.Sequential()
+model.add(tf.keras.layers.LSTM(128, input_shape=(maxlen, len(chars))))
+model.add(tf.keras.layers.Dense(len(chars), activation='softmax'))
 
-optimizer = RMSprop(learning_rate=0.01)
+optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.01)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
 
@@ -120,7 +118,7 @@ def on_epoch_end(epoch, _):
             sys.stdout.flush()
         print()
 
-print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
+print_callback = tf.keras.callbacks.LambdaCallback(on_epoch_end=on_epoch_end)
 
 model.fit(x, y,
           batch_size=batch_size,
