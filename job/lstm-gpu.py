@@ -22,11 +22,11 @@ import tensorflow as tf
 from datetime import datetime
 from packaging import version
 
-from tf.keras.preprocessing import sequence
-from tf.keras.models import Sequential
-from tf.keras.layers import Dense, Embedding
-from tf.keras.layers import LSTM
-from tf.keras.datasets import imdb
+from tensorflow.keras.preprocessing import sequence
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Embedding
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.datasets import imdb
 
 import time
 import os
