@@ -118,4 +118,4 @@ model.fit(x_train, y_train,
           epochs=epochs,
           verbose=1,
           validation_data=(x_test, y_test),
-          callbacks = [tboard_callback, batch_time_callback])
+          callbacks = [tboard_callback])
