@@ -84,18 +84,12 @@ def model_builder(x,attention):
     x = tf.keras.layers.MaxPool2D(pool_size=3,strides=2,padding='same',name='conv1_max_pool')(x)
 
     x = res_block(x,64,2,'ResBlock21')
-    x = attention_module(x, attention)
-
     x = res_block(x,64,1,'ResBlock22')
-    x = attention_module(x, attention)
-
     x = res_block(x,128,2,'ResBlock31')
-    x = attention_module(x, attention)
-    
     x = res_block(x,128,1,'ResBlock32')
 
     x =tf.keras.layers.GlobalAveragePooling2D(name='GAP')(x) 
-    pred = tf.keras.layers.Dense(num_of_class,activation='softmax')(x)
+    pred = tf.keras.layers.Dense(num_classes,activation='softmax')(x)
     
     return pred
 
