@@ -69,7 +69,7 @@ model.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
 model.add(tf.keras.layers.Conv2D(256, (3, 3), activation='relu'))
 model.add(tf.keras.layers.Conv2D(256, (3, 3), activation='relu'))
 
-model.add(tf.kears.layers.Flatten())
+model.add(tf.keras.layers.Flatten())
 model.add(tf.keras.layers.Dense(1024, activation='relu'))
 model.add(tf.keras.layers.Dropout(0.5))
 model.add(tf.keras.layers.Dense(1024, activation='relu'))
